@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import folium
+from folium.features import CustomIcon
 from streamlit_folium import folium_static
 
 # Function to load data
@@ -24,9 +25,14 @@ def create_map(df):
     
     # Add markers to the map
     for _, row in df.dropna(subset=['Latitude', 'Longitude']).iterrows():
+        icon = CustomIcon(
+            icon_image=row['Image'], 
+            icon_size=(50, 50),  # Adjust the size as needed
+        )
         folium.Marker(
             location=[row['Latitude'], row['Longitude']],
-            popup=f"Name: {row['Name']}<br>Faction: {row['Faction']}"
+            popup=f"Name: {row['Name']}<br>Faction: {row['Faction']}",
+            icon=icon
         ).add_to(m)
     
     return m
