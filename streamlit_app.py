@@ -77,10 +77,21 @@ if uploaded_file:
     st.subheader("Map Visualization")
     factions = df['Faction'].unique()
     selected_faction = st.multiselect("Filter by Faction", options=factions, default=factions)
+
+    # Extract unique tags
+    all_tags = set(tag.strip() for tags in df['Tags'].dropna() for tag in tags.split(','))
+    selected_tags = st.multiselect("Filter by Tags", options=list(all_tags), default=list(all_tags))
     
     display_option = st.radio("Display option", ("Pins", "Images"))
-    
+
+    # Filter data by faction and tags
+    def filter_by_tags(tags, selected_tags):
+        tags_list = [tag.strip() for tag in tags.split(',')]
+        return any(tag in tags_list for tag in selected_tags)
+
     filtered_df = df[df['Faction'].isin(selected_faction)]
+    if selected_tags:
+        filtered_df = filtered_df[filtered_df['Tags'].apply(lambda x: filter_by_tags(x, selected_tags))]
     
     if display_option == "Images":
         map_obj = create_map_with_images(filtered_df)
