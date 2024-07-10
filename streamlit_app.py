@@ -16,14 +16,12 @@ def display_stats(df):
     st.write(f"Total rows: {total_rows}")
     st.write(f"Rows without GPS coordinates: {missing_gps}")
 
-# Function to create map
-def create_map(df):
-    # Initialize the map centered on the average location
+# Function to create map with images
+def create_map_with_images(df):
     avg_lat = df['Latitude'].mean()
     avg_lon = df['Longitude'].mean()
     m = folium.Map(location=[avg_lat, avg_lon], zoom_start=2)
     
-    # Add markers to the map
     for _, row in df.dropna(subset=['Latitude', 'Longitude']).iterrows():
         icon = CustomIcon(
             icon_image=row['Image'], 
@@ -33,6 +31,20 @@ def create_map(df):
             location=[row['Latitude'], row['Longitude']],
             popup=f"Name: {row['Name']}<br>Faction: {row['Faction']}",
             icon=icon
+        ).add_to(m)
+    
+    return m
+
+# Function to create map with pins
+def create_map_with_pins(df):
+    avg_lat = df['Latitude'].mean()
+    avg_lon = df['Longitude'].mean()
+    m = folium.Map(location=[avg_lat, avg_lon], zoom_start=2)
+    
+    for _, row in df.dropna(subset=['Latitude', 'Longitude']).iterrows():
+        folium.Marker(
+            location=[row['Latitude'], row['Longitude']],
+            popup=f"Name: {row['Name']}<br>Faction: {row['Faction']}"
         ).add_to(m)
     
     return m
@@ -57,6 +69,13 @@ if uploaded_file:
     factions = df['Faction'].unique()
     selected_faction = st.multiselect("Filter by Faction", options=factions, default=factions)
     
+    display_option = st.radio("Display option", ("Pins", "Images"))
+    
     filtered_df = df[df['Faction'].isin(selected_faction)]
-    map_obj = create_map(filtered_df)
+    
+    if display_option == "Images":
+        map_obj = create_map_with_images(filtered_df)
+    else:
+        map_obj = create_map_with_pins(filtered_df)
+    
     folium_static(map_obj)
