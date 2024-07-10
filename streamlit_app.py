@@ -13,6 +13,8 @@ def load_data(file):
 
 # Function to display stats
 def display_stats(df):
+    total_rows = df.shape# Function to display stats
+def display_stats(df):
     total_rows = df.shape[0]
     missing_gps = df['GPS'].isnull().sum()
     st.write(f"Total rows: {total_rows}")
@@ -92,7 +94,7 @@ def plot_faction_counts(df):
     faction_counts = df['Faction'].value_counts().sort_index()
     
     # Set font size
-    plt.rcParams.update({'font.size': 8})
+    plt.rcParams.update({'font.size': 12})
     
     plt.figure(figsize=(10, 6))
     faction_counts.plot(kind='barh')
@@ -128,6 +130,7 @@ if uploaded_file:
     selected_tags = st.multiselect("Filter by Tags", options=list(all_tags), default=list(all_tags))
     
     display_option = st.radio("Display option", ("Pins", "Images"))
+    show_as_table = st.checkbox("Show results as a table")
 
     # Filter data by faction and tags
     def filter_by_tags(tags, selected_tags):
@@ -138,12 +141,16 @@ if uploaded_file:
     if selected_tags:
         filtered_df = filtered_df[filtered_df['Tags'].apply(lambda x: filter_by_tags(x, selected_tags))]
     
-    if display_option == "Images":
-        map_obj = create_map_with_images(filtered_df)
+    if show_as_table:
+        st.subheader("Filtered Results")
+        st.write(filtered_df[['Name', 'Handle', 'Faction', 'Tags', 'Bio']])
     else:
-        map_obj = create_map_with_pins(filtered_df)
-    
-    folium_static(map_obj)
+        if display_option == "Images":
+            map_obj = create_map_with_images(filtered_df)
+        else:
+            map_obj = create_map_with_pins(filtered_df)
+        
+        folium_static(map_obj)
     
     st.subheader("Tag Counts")
     plot_tag_counts(df)
