@@ -4,6 +4,7 @@ import folium
 from folium.features import CustomIcon
 from streamlit_folium import folium_static
 from folium import IFrame
+import matplotlib.pyplot as plt
 
 # Function to load data
 @st.cache_data
@@ -58,6 +59,19 @@ def create_map_with_pins(df):
     
     return m
 
+# Function to plot tag counts
+def plot_tag_counts(df):
+    tags_series = df['Tags'].str.split(',', expand=True).stack().str.strip()
+    tag_counts = tags_series.value_counts().sort_index()
+    
+    plt.figure(figsize=(10, 6))
+    tag_counts.plot(kind='bar')
+    plt.xlabel('Tags')
+    plt.ylabel('Count')
+    plt.title('Tag Counts')
+    plt.xticks(rotation=90)
+    st.pyplot(plt)
+
 # Streamlit app
 st.title("Excel GPS Data Analyzer")
 
@@ -100,3 +114,6 @@ if uploaded_file:
         map_obj = create_map_with_pins(filtered_df)
     
     folium_static(map_obj)
+    
+    st.subheader("Tag Counts")
+    plot_tag_counts(df)
