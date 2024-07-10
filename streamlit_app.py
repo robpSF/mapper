@@ -73,6 +73,9 @@ def plot_tag_counts(df):
                 tag_groups[first_letter] = []
             tag_groups[first_letter].append((tag, count))
     
+    # Set font size
+    plt.rcParams.update({'font.size': 12})
+    
     # Create and display a chart for each group
     for letter in sorted(tag_groups.keys()):
         tags, counts = zip(*tag_groups[letter])
@@ -83,6 +86,21 @@ def plot_tag_counts(df):
         plt.title(f'Tag Counts ({letter})')
         plt.xticks(rotation=0)
         st.pyplot(plt)
+
+# Function to plot faction counts
+def plot_faction_counts(df):
+    faction_counts = df['Faction'].value_counts().sort_index()
+    
+    # Set font size
+    plt.rcParams.update({'font.size': 8})
+    
+    plt.figure(figsize=(10, 6))
+    faction_counts.plot(kind='barh')
+    plt.xlabel('Count')
+    plt.ylabel('Faction')
+    plt.title('Faction Counts')
+    plt.xticks(rotation=0)
+    st.pyplot(plt)
 
 # Streamlit app
 st.title("Excel GPS Data Analyzer")
@@ -125,7 +143,4 @@ if uploaded_file:
     else:
         map_obj = create_map_with_pins(filtered_df)
     
-    folium_static(map_obj)
-    
-    st.subheader("Tag Counts")
-    plot_tag_counts(df)
+    folium_
