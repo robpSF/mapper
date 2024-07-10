@@ -77,11 +77,11 @@ def plot_tag_counts(df):
     for letter in sorted(tag_groups.keys()):
         tags, counts = zip(*tag_groups[letter])
         plt.figure(figsize=(10, 6))
-        plt.bar(tags, counts)
-        plt.xlabel('Tags')
-        plt.ylabel('Count')
+        plt.barh(tags, counts)
+        plt.xlabel('Count')
+        plt.ylabel('Tags')
         plt.title(f'Tag Counts ({letter})')
-        plt.xticks(rotation=90)
+        plt.xticks(rotation=0)
         st.pyplot(plt)
 
 # Streamlit app
