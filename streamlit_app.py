@@ -3,7 +3,7 @@ import pandas as pd
 import folium
 from folium.features import CustomIcon
 from streamlit_folium import folium_static
-from folium.map import IFrame
+from folium import IFrame
 
 # Function to load data
 @st.cache_data
