@@ -79,7 +79,8 @@ if uploaded_file:
     selected_faction = st.multiselect("Filter by Faction", options=factions, default=factions)
 
     # Extract unique tags
-    all_tags = set(tag.strip() for tags in df['Tags'].dropna() for tag in tags.split(','))
+    df['Tags'] = df['Tags'].fillna('')  # Replace NaNs with empty strings
+    all_tags = set(tag.strip() for tags in df['Tags'] for tag in tags.split(',') if tag)
     selected_tags = st.multiselect("Filter by Tags", options=list(all_tags), default=list(all_tags))
     
     display_option = st.radio("Display option", ("Pins", "Images"))
