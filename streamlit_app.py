@@ -3,6 +3,7 @@ import pandas as pd
 import folium
 from folium.features import CustomIcon
 from streamlit_folium import folium_static
+from folium.map import IFrame
 
 # Function to load data
 @st.cache_data
@@ -42,9 +43,17 @@ def create_map_with_pins(df):
     m = folium.Map(location=[avg_lat, avg_lon], zoom_start=2)
     
     for _, row in df.dropna(subset=['Latitude', 'Longitude']).iterrows():
+        html = f"""
+        <h4>Name: {row['Name']}</h4>
+        <h5>Faction: {row['Faction']}</h5>
+        <img src="{row['Image']}" width="100" height="100">
+        """
+        iframe = IFrame(html, width=200, height=200)
+        popup = folium.Popup(iframe, max_width=200)
+        
         folium.Marker(
             location=[row['Latitude'], row['Longitude']],
-            popup=f"Name: {row['Name']}<br>Faction: {row['Faction']}"
+            popup=popup
         ).add_to(m)
     
     return m
