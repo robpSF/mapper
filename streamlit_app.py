@@ -64,13 +64,24 @@ def plot_tag_counts(df):
     tags_series = df['Tags'].str.split(',', expand=True).stack().str.strip()
     tag_counts = tags_series.value_counts().sort_index()
     
-    plt.figure(figsize=(10, 6))
-    tag_counts.plot(kind='bar')
-    plt.xlabel('Tags')
-    plt.ylabel('Count')
-    plt.title('Tag Counts')
-    plt.xticks(rotation=90)
-    st.pyplot(plt)
+    # Split tag counts into groups based on the first letter
+    tag_groups = {}
+    for tag, count in tag_counts.items():
+        first_letter = tag[0].upper()
+        if first_letter not in tag_groups:
+            tag_groups[first_letter] = []
+        tag_groups[first_letter].append((tag, count))
+    
+    # Create and display a chart for each group
+    for letter in sorted(tag_groups.keys()):
+        tags, counts = zip(*tag_groups[letter])
+        plt.figure(figsize=(10, 6))
+        plt.bar(tags, counts)
+        plt.xlabel('Tags')
+        plt.ylabel('Count')
+        plt.title(f'Tag Counts ({letter})')
+        plt.xticks(rotation=90)
+        st.pyplot(plt)
 
 # Streamlit app
 st.title("Excel GPS Data Analyzer")
