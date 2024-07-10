@@ -67,10 +67,11 @@ def plot_tag_counts(df):
     # Split tag counts into groups based on the first letter
     tag_groups = {}
     for tag, count in tag_counts.items():
-        first_letter = tag[0].upper()
-        if first_letter not in tag_groups:
-            tag_groups[first_letter] = []
-        tag_groups[first_letter].append((tag, count))
+        if tag:  # Ensure tag is not empty
+            first_letter = tag[0].upper()
+            if first_letter not in tag_groups:
+                tag_groups[first_letter] = []
+            tag_groups[first_letter].append((tag, count))
     
     # Create and display a chart for each group
     for letter in sorted(tag_groups.keys()):
