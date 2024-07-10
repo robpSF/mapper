@@ -143,4 +143,10 @@ if uploaded_file:
     else:
         map_obj = create_map_with_pins(filtered_df)
     
-    folium_
+    folium_static(map_obj)
+    
+    st.subheader("Tag Counts")
+    plot_tag_counts(df)
+    
+    st.subheader("Faction Counts")
+    plot_faction_counts(df)
