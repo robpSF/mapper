@@ -180,6 +180,9 @@ if uploaded_file:
     if show_as_table:
         st.subheader("Filtered Results")
         st.write(filtered_df[['Name', 'Handle', 'Faction', 'Tags', 'Bio', 'TwFollowers', 'TwFollowing']])
+        
+        st.subheader("Heatmap: Faction by Twitter Follower Groups")
+        plot_heatmap(filtered_df)
     else:
         if display_option == "Images":
             map_obj = create_map_with_images(filtered_df)
@@ -193,6 +196,3 @@ if uploaded_file:
     
     st.subheader("Faction Counts")
     plot_faction_counts(df)
-    
-    st.subheader("Heatmap: Faction by Twitter Follower Groups")
-    plot_heatmap(filtered_df)
