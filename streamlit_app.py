@@ -5,6 +5,7 @@ from folium.features import CustomIcon
 from streamlit_folium import folium_static
 from folium import IFrame
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Function to load data
 @st.cache_data
@@ -102,6 +103,22 @@ def plot_faction_counts(df):
     plt.xticks(rotation=0)
     st.pyplot(plt)
 
+# Function to plot heatmap
+def plot_heatmap(df):
+    # Create a pivot table for the heatmap
+    df['TwFollowerGroup'] = pd.cut(df['TwFollowers'], 
+                                   bins=[-1, 200, 1000, 2000, 6000, 20000, float('inf')], 
+                                   labels=["<200", "200-1000", "1000-2000", "3000-6000", "6000-20000", ">20000"])
+    pivot_table = pd.pivot_table(df, values='Name', index='Faction', columns='TwFollowerGroup', aggfunc='count', fill_value=0)
+    
+    # Plot the heatmap
+    plt.figure(figsize=(12, 8))
+    sns.heatmap(pivot_table, annot=True, fmt='d', cmap='YlGnBu')
+    plt.xlabel('Twitter Followers')
+    plt.ylabel('Faction')
+    plt.title('Number of People in Each Faction by Twitter Follower Groups')
+    st.pyplot(plt)
+
 # Streamlit app
 st.title("Excel GPS Data Analyzer")
 
@@ -176,3 +193,6 @@ if uploaded_file:
     
     st.subheader("Faction Counts")
     plot_faction_counts(df)
+    
+    st.subheader("Heatmap: Faction by Twitter Follower Groups")
+    plot_heatmap(filtered_df)
