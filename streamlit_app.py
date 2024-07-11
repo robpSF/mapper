@@ -93,7 +93,7 @@ def plot_faction_counts(df):
     faction_counts = df['Faction'].value_counts().sort_index()
     
     # Set font size
-    plt.rcParams.update({'font.size': 12})
+    plt.rcParams.update({'font.size': 7})
     
     plt.figure(figsize=(10, 6))
     faction_counts.plot(kind='barh')
