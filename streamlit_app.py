@@ -75,7 +75,7 @@ def plot_tag_counts(df):
             tag_groups[first_letter].append((tag, count))
     
     # Set font size
-    plt.rcParams.update({'font.size': 12})
+    plt.rcParams.update({'font.size': 7})
     
     # Create and display a chart for each group
     for letter in sorted(tag_groups.keys()):
