@@ -143,13 +143,13 @@ if uploaded_file:
         if tw_followers_range == "<200":
             return df[df['TwFollowers'] < 200]
         elif tw_followers_range == "200-1000":
-            return df[(df['TwFollowers'] >= 200) and (df['TwFollowers'] <= 1000)]
+            return df[(df['TwFollowers'] >= 200) & (df['TwFollowers'] <= 1000)]
         elif tw_followers_range == "1000-2000":
-            return df[(df['TwFollowers'] > 1000) and (df['TwFollowers'] <= 2000)]
+            return df[(df['TwFollowers'] > 1000) & (df['TwFollowers'] <= 2000)]
         elif tw_followers_range == "3000-6000":
-            return df[(df['TwFollowers'] >= 3000) and (df['TwFollowers'] <= 6000)]
+            return df[(df['TwFollowers'] >= 3000) & (df['TwFollowers'] <= 6000)]
         elif tw_followers_range == "6000-20000":
-            return df[(df['TwFollowers'] >= 6000) and (df['TwFollowers'] <= 20000)]
+            return df[(df['TwFollowers'] >= 6000) & (df['TwFollowers'] <= 20000)]
         elif tw_followers_range == ">20000":
             return df[df['TwFollowers'] > 20000]
         else:
