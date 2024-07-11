@@ -4,7 +4,9 @@ import folium
 from folium.features import CustomIcon
 from streamlit_folium import folium_static
 from folium import IFrame
+from folium.plugins import Draw
 import matplotlib.pyplot as plt
+from shapely.geometry import Point, Polygon
 
 # Function to load data
 @st.cache_data
@@ -12,8 +14,6 @@ def load_data(file):
     return pd.read_excel(file)
 
 # Function to display stats
-def display_stats(df):
-    total_rows = df.shape# Function to display stats
 def display_stats(df):
     total_rows = df.shape[0]
     missing_gps = df['GPS'].isnull().sum()
@@ -25,6 +25,8 @@ def create_map_with_images(df):
     avg_lat = df['Latitude'].mean()
     avg_lon = df['Longitude'].mean()
     m = folium.Map(location=[avg_lat, avg_lon], zoom_start=2)
+    draw = Draw(export=True)
+    draw.add_to(m)
     
     for _, row in df.dropna(subset=['Latitude', 'Longitude']).iterrows():
         icon = CustomIcon(
@@ -44,6 +46,8 @@ def create_map_with_pins(df):
     avg_lat = df['Latitude'].mean()
     avg_lon = df['Longitude'].mean()
     m = folium.Map(location=[avg_lat, avg_lon], zoom_start=2)
+    draw = Draw(export=True)
+    draw.add_to(m)
     
     for _, row in df.dropna(subset=['Latitude', 'Longitude']).iterrows():
         html = f"""
@@ -140,6 +144,27 @@ if uploaded_file:
     filtered_df = df[df['Faction'].isin(selected_faction)]
     if selected_tags:
         filtered_df = filtered_df[filtered_df['Tags'].apply(lambda x: filter_by_tags(x, selected_tags))]
+
+    # Allow the user to draw a polygon on the map and filter points within the polygon
+    st.subheader("Draw Area on Map to Filter")
+    if display_option == "Images":
+        map_obj = create_map_with_images(filtered_df)
+    else:
+        map_obj = create_map_with_pins(filtered_df)
+    
+    folium_static(map_obj)
+    
+    drawn_polygon = st.text_area("Drawn Polygon Coordinates", "Paste the coordinates here after drawing")
+    
+    if drawn_polygon:
+        coords = eval(drawn_polygon)  # Convert string to list of tuples
+        polygon = Polygon(coords)
+        
+        def is_within_polygon(lat, lon, polygon):
+            point = Point(lon, lat)
+            return polygon.contains(point)
+        
+        filtered_df = filtered_df[filtered_df.apply(lambda row: is_within_polygon(row['Latitude'], row['Longitude'], polygon), axis=1)]
     
     if show_as_table:
         st.subheader("Filtered Results")
