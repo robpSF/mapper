@@ -13,8 +13,6 @@ def load_data(file):
 
 # Function to display stats
 def display_stats(df):
-    total_rows = df.shape# Function to display stats
-def display_stats(df):
     total_rows = df.shape[0]
     missing_gps = df['GPS'].isnull().sum()
     st.write(f"Total rows: {total_rows}")
@@ -143,7 +141,7 @@ if uploaded_file:
     
     if show_as_table:
         st.subheader("Filtered Results")
-        st.write(filtered_df[['Name', 'Handle', 'Faction', 'Tags', 'Bio']])
+        st.write(filtered_df[['Name', 'Handle', 'Faction', 'Tags', 'Bio', 'TwFollowers', 'TwFollowing']])
     else:
         if display_option == "Images":
             map_obj = create_map_with_images(filtered_df)
