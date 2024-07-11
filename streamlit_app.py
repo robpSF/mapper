@@ -129,15 +129,36 @@ if uploaded_file:
     
     display_option = st.radio("Display option", ("Pins", "Images"))
     show_as_table = st.checkbox("Show results as a table")
+    
+    # Twitter followers filter
+    tw_followers_range = st.selectbox("Filter by Twitter Followers", 
+                                      options=["All", "<200", "200-1000", "1000-2000", "3000-6000", "6000-20000", ">20000"])
 
     # Filter data by faction and tags
     def filter_by_tags(tags, selected_tags):
         tags_list = [tag.strip() for tag in tags.split(',')]
         return any(tag in tags_list for tag in selected_tags)
+    
+    def filter_by_tw_followers(df, tw_followers_range):
+        if tw_followers_range == "<200":
+            return df[df['TwFollowers'] < 200]
+        elif tw_followers_range == "200-1000":
+            return df[(df['TwFollowers'] >= 200) and (df['TwFollowers'] <= 1000)]
+        elif tw_followers_range == "1000-2000":
+            return df[(df['TwFollowers'] > 1000) and (df['TwFollowers'] <= 2000)]
+        elif tw_followers_range == "3000-6000":
+            return df[(df['TwFollowers'] >= 3000) and (df['TwFollowers'] <= 6000)]
+        elif tw_followers_range == "6000-20000":
+            return df[(df['TwFollowers'] >= 6000) and (df['TwFollowers'] <= 20000)]
+        elif tw_followers_range == ">20000":
+            return df[df['TwFollowers'] > 20000]
+        else:
+            return df
 
     filtered_df = df[df['Faction'].isin(selected_faction)]
     if selected_tags:
         filtered_df = filtered_df[filtered_df['Tags'].apply(lambda x: filter_by_tags(x, selected_tags))]
+    filtered_df = filter_by_tw_followers(filtered_df, tw_followers_range)
     
     if show_as_table:
         st.subheader("Filtered Results")
