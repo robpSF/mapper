@@ -7,6 +7,7 @@ from folium import IFrame
 from folium.plugins import Draw
 import matplotlib.pyplot as plt
 from shapely.geometry import Point, Polygon
+import json
 
 # Function to load data
 @st.cache_data
@@ -154,10 +155,10 @@ if uploaded_file:
     
     folium_static(map_obj)
     
-    drawn_polygon = st.text_area("Drawn Polygon Coordinates", "Paste the coordinates here after drawing")
+    drawn_polygon = st.text_area("Drawn Polygon Coordinates (in JSON format)", "Paste the coordinates here after drawing")
     
     if drawn_polygon:
-        coords = eval(drawn_polygon)  # Convert string to list of tuples
+        coords = json.loads(drawn_polygon)  # Convert JSON string to list of tuples
         polygon = Polygon(coords)
         
         def is_within_polygon(lat, lon, polygon):
