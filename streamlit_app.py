@@ -75,7 +75,7 @@ def plot_tag_counts(df):
             tag_groups[first_letter].append((tag, count))
     
     # Set font size
-    plt.rcParams.update({'font.size': 7})
+    plt.rcParams.update({'font.size': 12})
     
     # Create and display a chart for each group
     for letter in sorted(tag_groups.keys()):
@@ -93,7 +93,7 @@ def plot_faction_counts(df):
     faction_counts = df['Faction'].value_counts().sort_index()
     
     # Set font size
-    plt.rcParams.update({'font.size': 7})
+    plt.rcParams.update({'font.size': 12})
     
     plt.figure(figsize=(10, 6))
     faction_counts.plot(kind='barh')
@@ -127,10 +127,15 @@ uploaded_file = st.file_uploader("Upload an Excel file", type=["xlsx"])
 if uploaded_file:
     df = load_data(uploaded_file)
     
-    # Split GPS coordinates into Latitude and Longitude
-    df[['Latitude', 'Longitude']] = df['GPS'].str.split(',', expand=True)
-    df['Latitude'] = df['Latitude'].astype(float)
-    df['Longitude'] = df['Longitude'].astype(float)
+    # Split GPS coordinates into Latitude and Longitude with validation
+    def split_gps(gps):
+        try:
+            lat, lon = map(str.strip, gps.split(','))
+            return float(lat), float(lon)
+        except:
+            return None, None
+    
+    df['Latitude'], df['Longitude'] = zip(*df['GPS'].apply(split_gps))
     
     st.subheader("Data Stats")
     display_stats(df)
